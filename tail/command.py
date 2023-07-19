@@ -17,4 +17,5 @@ class TailCommand(BaseCommand):
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         number = self.get_arg('n').value
-        return df.tail(number or DEFAULT_NUMBER)
+        limit = self.get_arg('limit').value
+        return df.tail(number or limit or DEFAULT_NUMBER)
