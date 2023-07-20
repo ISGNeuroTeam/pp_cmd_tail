@@ -14,10 +14,26 @@ def capture(s):
 
 
 class TestCommand(TestCase):
-
+    # Testing N
     def test_n(self):
         for i in range(2, 6):
             test_string = f"| readFile example_002.csv type=csv storage=pp_storage | tail {i}"
             sample = [SAMPLE[0]]+SAMPLE[len(SAMPLE)-i:]
             result = capture(test_string)
             self.assertEqual(sample, result)
+
+    # Testing limit
+    def test_limit(self):
+        for i in range(2, 6):
+            test_string = f"| readFile example_002.csv type=csv storage=pp_storage | tail limit={i}"
+            sample = [SAMPLE[0]]+SAMPLE[len(SAMPLE)-i:]
+            result = capture(test_string)
+            self.assertEqual(sample, result)
+
+    def test_both(self):
+        for i in range(2, 6):
+            for j in range(2, 6):
+                test_string = f"| readFile example_002.csv type=csv storage=pp_storage | tail {i} limit={j}"
+                sample = [SAMPLE[0]]+SAMPLE[len(SAMPLE)-i:]
+                result = capture(test_string)
+                self.assertEqual(sample, result)
