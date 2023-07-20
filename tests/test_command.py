@@ -17,15 +17,15 @@ class TestCommand(TestCase):
     # нужно протестировать
     # n
     def test_n(self):
-        # sample = subprocess.run(['pp', EXPECTED_RESULT], capture_output=True).stdout.decode()
-        # sample = [x.split() for x in sample.split('\n')]
-        # sample = [lst[1:] for lst in sample]
+        sample = subprocess.run(['pp', EXPECTED_RESULT], capture_output=True).stdout.decode()
+        sample = [x.split() for x in sample[:-1].split('\n')]
+        sample = [sample[0]]+[lst[1:] for lst in sample[1:]]
         result = subprocess.run(['pp', TEST_STRING], capture_output=True).stdout.decode()
-        result = re.sub('\n[1234567890]* *', '\n', result)[:-1]
-        result = [x.split() for x in result.split('\n')]
+        result = [x.split() for x in result[:-1].split('\n')]
+        result = [result[0]] + [lst[1:] for lst in result[1:]]
         df = DataFrame(result[1:], columns=result[0])
 
-        self.assertEqual(sample, result)
+        self.assertEqual(sample, df)
     #
     #
     #
