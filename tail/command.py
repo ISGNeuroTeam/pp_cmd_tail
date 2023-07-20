@@ -4,6 +4,7 @@ from pp_exec_env.base_command import BaseCommand, Syntax
 
 DEFAULT_NUMBER = 10
 
+
 class TailCommand(BaseCommand):
     # define syntax of your command here
     syntax = Syntax(
