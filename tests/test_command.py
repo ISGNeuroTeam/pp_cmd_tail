@@ -17,14 +17,8 @@ def capture(s):
 
 class TestCommand(TestCase):
 
-    # нужно протестировать
-    # n
     def test_n(self):
         sample = capture(EXPECTED_RESULT)
         result = capture(TEST_STRING)
 
         self.assertEqual(sample, result)
-    #
-    #
-    #
-    #
