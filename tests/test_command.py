@@ -2,23 +2,22 @@ import subprocess
 from unittest import TestCase
 from pandas import DataFrame
 
-# /home/svyatoslav/PycharmProjects/postprocessing_test_1/venv/bin/pp
-TEST_STRING = "| readFile example_002.csv type=csv storage=pp_storage | tail 5"
-EXPECTED_RESULT = "readFile example_002.csv type=csv storage=pp_storage"
+SAMPLE = [['aa', 'b', 'c'], ['3', 'AAA', '10001'], ['3', 'DDD', '10002'], ['1', 'EEE', '1000001'], ['4', 'CCC', '3'], ['3', 'BBB', '15']]
 
 
 def capture(s):
+    """Captures the output of postprocessing command s and turns it into a Dataframe"""
     x = subprocess.run(['pp', s], capture_output=True).stdout.decode()
     x = [n.split() for n in x[:-1].split('\n')]
     x = [x[0]] + [lst[1:] for lst in x[1:]]
-    x = DataFrame(x[1:], columns=x[0])
     return x
 
 
 class TestCommand(TestCase):
 
     def test_n(self):
-        sample = capture(EXPECTED_RESULT)
-        result = capture(TEST_STRING)
-
-        self.assertEqual(sample, result)
+        for i in range(2, 6):
+            test_string = f"| readFile example_002.csv type=csv storage=pp_storage | tail {i}"
+            sample = [SAMPLE[0]]+SAMPLE[len(SAMPLE)-i:]
+            result = capture(test_string)
+            self.assertEqual(sample, result)
