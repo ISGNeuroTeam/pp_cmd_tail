@@ -13,8 +13,6 @@ class TailCommand(BaseCommand):
             Keyword("limit", required=False, otl_type=OTLType.INTEGER),
         ],
     )
-    use_timewindow = False  # Does not require time window arguments
-    idempotent = True  # Does not invalidate cache
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         number = self.get_arg('n').value
