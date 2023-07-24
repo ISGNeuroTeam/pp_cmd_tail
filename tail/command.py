@@ -1,3 +1,4 @@
+"""Module for getting a tail of a DataFrame"""
 import pandas as pd
 from otlang.sdk.syntax import Keyword, Positional, OTLType
 from pp_exec_env.base_command import BaseCommand, Syntax
@@ -6,6 +7,7 @@ DEFAULT_NUMBER = 10
 
 
 class TailCommand(BaseCommand):
+    """Class for getting a tail of a DataFrame"""
     # define syntax of your command here
     syntax = Syntax(
         [
@@ -15,6 +17,6 @@ class TailCommand(BaseCommand):
     )
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        number = self.get_arg('n').value
-        limit = self.get_arg('limit').value
+        number = self.get_arg("n").value
+        limit = self.get_arg("limit").value
         return df.tail(number or limit or DEFAULT_NUMBER)
