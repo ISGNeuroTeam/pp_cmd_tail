@@ -1,6 +1,5 @@
 import subprocess
 from unittest import TestCase
-from pandas import DataFrame
 
 SAMPLE = [['aa', 'b', 'c'], ['3', 'AAA', '10001'], ['3', 'DDD', '10002'], ['1', 'EEE', '1000001'], ['4', 'CCC', '3'],
           ['3', 'BBB', '15']]
