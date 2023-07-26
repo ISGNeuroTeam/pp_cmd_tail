@@ -23,12 +23,15 @@ def capture(s):
 
 class TestCommand(TestCase):
     """Class for testing tail command"""
+
     # Testing N
     def test_n(self):
         for i in range(2, 6):
             test_string = f"| readFile example_002.csv type=csv " \
                           f"storage=pp_storage | tail {i}"
-            sample = [SAMPLE[0]] + SAMPLE[len(SAMPLE) - i:]
+            sample = SAMPLE[len(SAMPLE) - i:]
+            sample.reverse()
+            sample = [SAMPLE[0]] + sample
             result = capture(test_string)
             self.assertEqual(sample, result)
 
@@ -37,7 +40,9 @@ class TestCommand(TestCase):
         for i in range(2, 6):
             test_string = f"| readFile example_002.csv type=csv" \
                           f" storage=pp_storage | tail limit={i}"
-            sample = [SAMPLE[0]] + SAMPLE[len(SAMPLE) - i:]
+            sample = SAMPLE[len(SAMPLE) - i:]
+            sample.reverse()
+            sample = [SAMPLE[0]] + sample
             result = capture(test_string)
             self.assertEqual(sample, result)
 
@@ -47,7 +52,9 @@ class TestCommand(TestCase):
             for j in range(2, 6):
                 test_string = f"| readFile example_002.csv type=csv" \
                               f" storage=pp_storage | tail {i} limit={j}"
-                sample = [SAMPLE[0]] + SAMPLE[len(SAMPLE) - i:]
+                sample = SAMPLE[len(SAMPLE) - i:]
+                sample.reverse()
+                sample = [SAMPLE[0]] + sample
                 result = capture(test_string)
                 self.assertEqual(sample, result)
 
@@ -56,8 +63,12 @@ class TestCommand(TestCase):
         for i in range(2, 6):
             test_string = f"| readFile example_002.csv type=csv " \
                           f"storage=pp_storage | tail {i}"
-            sample = [SAMPLE[0]] + SAMPLE[len(SAMPLE) - i + 1:]
-            sample1 = [SAMPLE[0]] + SAMPLE[len(SAMPLE) - i - 1:]
+            sample = SAMPLE[len(SAMPLE) - i + 1:]
+            sample.reverse()
+            sample = [SAMPLE[0]] + sample
+            sample1 = SAMPLE[len(SAMPLE) - i - 1:]
+            sample1.reverse()
+            sample1 = [SAMPLE[0]] + sample1
             result = capture(test_string)
             self.assertNotEqual(sample, result)
             self.assertNotEqual(sample1, result)
@@ -66,8 +77,12 @@ class TestCommand(TestCase):
         for i in range(2, 6):
             test_string = f"| readFile example_002.csv type=csv " \
                           f"storage=pp_storage | tail limit={i}"
-            sample = [SAMPLE[0]] + SAMPLE[len(SAMPLE) - i + 1:]
-            sample1 = [SAMPLE[0]] + SAMPLE[len(SAMPLE) - i - 1:]
+            sample = SAMPLE[len(SAMPLE) - i + 1:]
+            sample.reverse()
+            sample = [SAMPLE[0]] + sample
+            sample1 = SAMPLE[len(SAMPLE) - i - 1:]
+            sample1.reverse()
+            sample1 = [SAMPLE[0]] + sample1
             result = capture(test_string)
             self.assertNotEqual(sample, result)
             self.assertNotEqual(sample1, result)
@@ -77,8 +92,12 @@ class TestCommand(TestCase):
             for j in range(2, 6):
                 test_string = f"| readFile example_002.csv type=csv " \
                               f"storage=pp_storage | tail {i} limit={j}"
-                sample = [SAMPLE[0]] + SAMPLE[len(SAMPLE) - i + 1:]
-                sample1 = [SAMPLE[0]] + SAMPLE[len(SAMPLE) - i - 1:]
+                sample = SAMPLE[len(SAMPLE) - i + 1:]
+                sample.reverse()
+                sample = [SAMPLE[0]] + sample
+                sample1 = SAMPLE[len(SAMPLE) - i - 1:]
+                sample1.reverse()
+                sample1 = [SAMPLE[0]] + sample1
                 result = capture(test_string)
                 self.assertNotEqual(sample, result)
                 self.assertNotEqual(sample1, result)
