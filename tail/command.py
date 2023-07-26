@@ -19,4 +19,4 @@ class TailCommand(BaseCommand):
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         number = self.get_arg("n").value
         limit = self.get_arg("limit").value
-        return df.tail(number or limit or DEFAULT_NUMBER)
+        return df.tail(number or limit or DEFAULT_NUMBER).iloc[::-1]
