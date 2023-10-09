@@ -17,6 +17,24 @@ class TailCommand(BaseCommand):
     )
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        # get and check args
         number = self.get_arg("n").value
+        if not_none(number) and number <= 0:
+            """
+            "tail -1" or "tail 0" return no dataframe and error
+            """
+            print(f"number parameter must have a positive [>=0] integer value, not {number}")
+            return pd.DataFrame()
         limit = self.get_arg("limit").value
-        return df.tail(number or limit or DEFAULT_NUMBER).iloc[::-1]
+        if not_none(limit) and limit <= 0:
+            print(f"limit parameter must have a positive [>=0] integer value, not {number}")
+            return pd.DataFrame()
+
+        elements: int = number if not_none(number) else (limit if not_none(limit) else DEFAULT_NUMBER)
+        print(f'{number=} | {limit=} | {elements=}')
+
+        return df.tail(elements)
+
+
+def not_none(number: int) -> bool:
+    return number is not None
