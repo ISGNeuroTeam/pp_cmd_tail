@@ -1,10 +1,12 @@
 """Module for testing tail command"""
 import os
+from hypothesis import given, strategies as st
+import pandas as pd
+from pytest import raises
 from unittest import TestCase
 
-import pandas as pd
 from postprocessing_sdk.commands.pp import Command
-from pytest import raises
+
 from otlang.exceptions import OTLException
 
 # sample dict
@@ -19,7 +21,8 @@ class TestCommand(TestCase):
 
     def setUp(self):
         self.command = Command()
-        commands_dir = '/home/mashida/dev/pp/pp_cmd_tail/venv/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd'
+        commands_dir = os.path.join(os.path.dirname(os.getcwd()),
+                                    'venv/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd')
         self.command._create_command_executor(storage='', commands_dir=commands_dir)
         parent_dir = os.path.dirname(os.getcwd())
         # add current command to self.command with _import_user_commands()
@@ -30,7 +33,7 @@ class TestCommand(TestCase):
         sample = pd.DataFrame(data=DATA, index=INDEXES)
         # calc
         otl_query_readfile_only = '| readFile example_002.csv type=csv storage=pp_storage '
-        result = self.command.run_otl(otl_query=otl_query_readfile_only, storage='')
+        result = self.command.run_otl(otl_query=otl_query_readfile_only, storage='', df_print=False)
         # check
         pd.testing.assert_frame_equal(sample, result)
 
@@ -56,42 +59,40 @@ class TestCommand(TestCase):
         # check
         pd.testing.assert_frame_equal(sample, result)
 
-    def test_command_with_both_params(self):
-        for i in range(1, 12):
-            for j in range(1, 12):
-                otl_query = f"| readFile example_002.csv type=csv" \
-                            f" storage=pp_storage | tail {i} limit={j}"
-                self.run_test_with_otl_query_loop(otl=otl_query, n=i)
+    @given(i=st.integers(min_value=1, max_value=12), j=st.integers(min_value=1, max_value=12))
+    def test_command_with_both_params(self, i: int, j: int):
+        otl_query = f"| readFile example_002.csv type=csv" \
+                    f" storage=pp_storage | tail {i} limit={j}"
+        self.run_test_with_otl_query_loop(otl=otl_query, n=i)
 
-    def test_command_with_both_zero_or_negative_params(self):
-        for i in range(-3, 1):
-            for j in range(-3, 1):
-                otl_query = f"| readFile example_002.csv type=csv" \
-                            f" storage=pp_storage | tail {i} limit={j}"
-                with raises(ValueError):
-                    self.run_failing_test_with_otl_query_loop(otl=otl_query)
+    @given(i=st.integers(min_value=-3, max_value=0), j=st.integers(min_value=-3, max_value=0))
+    def test_command_with_both_zero_or_negative_params(self, i: int, j: int):
+        otl_query = f"| readFile example_002.csv type=csv" \
+                    f" storage=pp_storage | tail {i} limit={j}"
+        with raises(ValueError):
+            self.run_failing_test_with_otl_query_loop(otl=otl_query)
 
-    def test_command_with_tail_param(self):
-        for n in range(1, 12):
-            otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail {n}'
-            self.run_test_with_otl_query_loop(otl=otl_query, n=n)
+    @given(st.integers(min_value=1, max_value=12))
+    def test_command_with_tail_param(self, n: int):
+        otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail {n}'
+        self.run_test_with_otl_query_loop(otl=otl_query, n=n)
 
-    def test_command_with_zero_or_negative_tail_param(self):
-        for n in range(-3, 1):
-            otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail {n}'
-            with raises(ValueError):
-                self.run_failing_test_with_otl_query_loop(otl=otl_query)
+    @given(st.integers(min_value=-3, max_value=0))
+    def test_command_with_zero_or_negative_tail_param(self, n: int):
+        otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail {n}'
+        with raises(ValueError):
+            self.run_failing_test_with_otl_query_loop(otl=otl_query)
 
-    def test_command_with_limit_param(self):
-        for n in range(1, 12):
-            otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail limit={n}'
-            self.run_test_with_otl_query_loop(otl=otl_query, n=n)
+    @given(st.integers(min_value=1, max_value=12))
+    def test_command_with_limit_param(self, n: int):
+        otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail limit={n}'
+        self.run_test_with_otl_query_loop(otl=otl_query, n=n)
 
-    def test_command_with_zero_or_negative_limit_param(self):
-        for n in range(-3, 1):
-            otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail limit={n}'
-            with raises(ValueError):
-                self.run_failing_test_with_otl_query_loop(otl=otl_query)
+    @given(st.integers(min_value=-3, max_value=0))
+    def test_command_with_zero_or_negative_limit_param(self, n: int):
+        otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail limit={n}'
+        with raises(ValueError):
+            self.run_failing_test_with_otl_query_loop(otl=otl_query)
 
     def test_no_tail_command(self):
         otl_query: str = f'| readFile example_002.csv type=csv storage=pp_storage | limit=2'
