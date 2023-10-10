@@ -4,6 +4,8 @@ from unittest import TestCase
 
 import pandas as pd
 from postprocessing_sdk.commands.pp import Command
+from pytest import raises
+from otlang.exceptions import OTLException
 
 # sample dict
 DATA = {'a': [2145, 654372, 46, 35678, 865476, 435378, 8647, -418084, -844815, -1271546],
@@ -43,14 +45,14 @@ class TestCommand(TestCase):
         data2 = {'a': DATA['a'][start:], 'b': DATA['b'][start:]}
         sample = pd.DataFrame(data=data2, index=INDEXES[start:])
         # run tested command
-        result = self.command.run_otl(otl_query=otl, storage='')
+        result = self.command.run_otl(otl_query=otl, storage='', raise_error=True, df_print=False)
         # check
         pd.testing.assert_frame_equal(sample, result)
 
     def run_failing_test_with_otl_query_loop(self, otl: str) -> None:
         sample = pd.DataFrame()
         # run tested command
-        result = self.command.run_otl(otl_query=otl, storage='')
+        result = self.command.run_otl(otl_query=otl, storage='', raise_error=True, df_print=False)
         # check
         pd.testing.assert_frame_equal(sample, result)
 
@@ -66,7 +68,8 @@ class TestCommand(TestCase):
             for j in range(-3, 1):
                 otl_query = f"| readFile example_002.csv type=csv" \
                             f" storage=pp_storage | tail {i} limit={j}"
-                self.run_failing_test_with_otl_query_loop(otl=otl_query)
+                with raises(ValueError):
+                    self.run_failing_test_with_otl_query_loop(otl=otl_query)
 
     def test_command_with_tail_param(self):
         for n in range(1, 12):
@@ -76,7 +79,8 @@ class TestCommand(TestCase):
     def test_command_with_zero_or_negative_tail_param(self):
         for n in range(-3, 1):
             otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail {n}'
-            self.run_failing_test_with_otl_query_loop(otl=otl_query)
+            with raises(ValueError):
+                self.run_failing_test_with_otl_query_loop(otl=otl_query)
 
     def test_command_with_limit_param(self):
         for n in range(1, 12):
@@ -86,8 +90,10 @@ class TestCommand(TestCase):
     def test_command_with_zero_or_negative_limit_param(self):
         for n in range(-3, 1):
             otl_query = f'| readFile example_002.csv type=csv storage=pp_storage | tail limit={n}'
-            self.run_failing_test_with_otl_query_loop(otl=otl_query)
+            with raises(ValueError):
+                self.run_failing_test_with_otl_query_loop(otl=otl_query)
 
     def test_no_tail_command(self):
         otl_query: str = f'| readFile example_002.csv type=csv storage=pp_storage | limit=2'
-        self.run_failing_test_with_otl_query_loop(otl=otl_query)
+        with raises(OTLException):
+            self.run_failing_test_with_otl_query_loop(otl=otl_query)
