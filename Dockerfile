@@ -1,18 +1,35 @@
+# Use an official Python runtime as a parent image
 FROM python:3.9.7
+
+# Describe credits
 LABEL authors="mashida"
+
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
 
-RUN mkdir /postprocessing_sdk
-RUN git clone --branch feature/DEV-4320 https://github.com/ISGNeuroTeam/postprocessing_sdk.git
+# Set the working directory
+WORKDIR /app
 
-RUN mkdir /postprocessing_sdk/postprocessing_sdk/pp_cmd/readFile
-RUN git clone https://github.com/ISGNeuroTeam/pp_cmd_readFile /postprocessing_sdk/postprocessing_sdk/pp_cmd/readFile
+## Install virtualenv
+#RUN python -m ensurepip --upgrade && \
+#    pip install --upgrade pip && \
+#    pip install virtualenv
 
-RUN chmod -R 0777 /postprocessing_sdk
+# Create and setup venv
+#ENV VIRTUAL_ENV=/app/venv
+#RUN python -m venv $VIRTUAL_ENV
+#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+#RUN echo $PATH
 
-ADD tail postprocessing_sdk/postprocessing_sdk/pp_cmd/
-ADD tests postprocessing_sdk/postprocessing_sdk/pp_cmd/
+# Copy reqiurements
+COPY requirements.txt /app/requirements.txt
 
-#CMD ["python", "/postprocessing_sdk/postprocessing_sdk/pp_cmd/tail/server.py"]
+# Install dependencies
+RUN pip install --no-cache-dir --extra-index-url http://s.dev.isgneuro.com/repository/ot.platform/simple --trusted-host s.dev.isgneuro.com postprocessing-sdk
+RUN pip install --no-cache-dir  -r requirements.txt
 
+# Copy source code
+COPY . /app
 
+# Run tests
+ENTRYPOINT ["pytest"]

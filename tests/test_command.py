@@ -1,8 +1,9 @@
 """Module for testing tail command"""
 import os
+from sys import prefix
 from hypothesis import given, strategies as st
 import pandas as pd
-from pytest import raises
+from pytest import raises, fail
 from unittest import TestCase
 
 from postprocessing_sdk.commands.pp import Command
@@ -21,8 +22,8 @@ class TestCommand(TestCase):
 
     def setUp(self):
         self.command = Command()
-        commands_dir = os.path.join(os.path.dirname(os.getcwd()),
-                                    'venv/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd')
+        commands_dir = os.path.join(prefix,
+                                    'lib/python3.9/site-packages/postprocessing_sdk/pp_cmd')
         self.command._create_command_executor(storage='', commands_dir=commands_dir)
         parent_dir = os.path.dirname(os.getcwd())
         # add current command to self.command with _import_user_commands()
