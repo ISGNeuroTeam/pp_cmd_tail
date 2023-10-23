@@ -78,7 +78,7 @@ dev: venv
 clean: clean_build clean_pack clean_test clean_venv
 
 test:
-	@echo "Testing..."
+	docker build --progress=plain -t pp_cmd_tail_app . && docker run -it pp_cmd_tail_app
 
 clean_test:
 	@echo "Clean tests"
