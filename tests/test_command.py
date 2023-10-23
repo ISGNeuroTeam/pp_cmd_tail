@@ -25,7 +25,7 @@ class TestCommand(TestCase):
         commands_dir = os.path.join(prefix,
                                     'lib/python3.9/site-packages/postprocessing_sdk/pp_cmd')
         self.command._create_command_executor(storage='', commands_dir=commands_dir)
-        parent_dir = os.path.dirname(os.getcwd())
+        parent_dir = os.path.dirname(os.path.dirname(__file__))
         # add current command to self.command with _import_user_commands()
         self.command.command_executor.command_classes.update(
             self.command.command_executor._import_user_commands(commands_directory=parent_dir, follow_links=True))

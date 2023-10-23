@@ -31,5 +31,10 @@ RUN pip install --no-cache-dir  -r requirements.txt
 # Copy source code
 COPY . /app
 
+# Copy readFile config.ini
+COPY tests/config.ini  /usr/local/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd/readFile/config.ini
+
+RUN ln -s tail /usr/local/lib/python3.9/site-packages/postprocessing_sdk/pp_cmd/tail
+
 # Run tests
 ENTRYPOINT ["pytest"]
